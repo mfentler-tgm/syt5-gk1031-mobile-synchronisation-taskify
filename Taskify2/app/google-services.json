@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "490593095407",
+    "firebase_url": "https://syt-theorie-tasks.firebaseio.com",
+    "project_id": "syt-theorie-tasks",
+    "storage_bucket": "syt-theorie-tasks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490593095407:android:bc72066f127d4fb5",
+        "android_client_info": {
+          "package_name": "com.taskify.syt.taskify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490593095407-g4r7nq8avue40bmqaru7jo4uc7qdq85e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.taskify.syt.taskify",
+            "certificate_hash": "4bb3c74d4e42fc8f82d7193b192c328592f05908"
+          }
+        },
+        {
+          "client_id": "490593095407-3humtnueqv9vpnvutcbatq2nnkn2ir3f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAar82FYpl-UsRJ-nTK5zHgo0xhzZhZv84"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490593095407-3humtnueqv9vpnvutcbatq2nnkn2ir3f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
