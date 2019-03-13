@@ -1,5 +1,7 @@
 package com.taskify.syt.taskify;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -25,6 +27,11 @@ public class EmailPasswordActivity extends MainActivity implements
     private EditText mPasswordField;
     private TextView mStatusMessage;
 
+    private static EmailPasswordActivity instance;
+
+    public static EmailPasswordActivity getInstance() {
+        return instance;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +43,12 @@ public class EmailPasswordActivity extends MainActivity implements
         mStatusMessage = findViewById(R.id.statusMessage);
         // Buttons
         findViewById(R.id.signInButton).setOnClickListener(this);
-        findViewById(R.id.signOutButton).setOnClickListener(this);
 
         // ...
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        instance = this;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class EmailPasswordActivity extends MainActivity implements
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+        updateUI(currentUser, null);
     }
 
     private void signIn(String email, String password) {
@@ -66,13 +74,13 @@ public class EmailPasswordActivity extends MainActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            updateUI(user, null);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            updateUI(null, null);
                         }
 
                         // [START_EXCLUDE]
@@ -86,16 +94,19 @@ public class EmailPasswordActivity extends MainActivity implements
         // [END sign_in_with_email]
     }
 
-    private void signOut() {
+    public void signOut(Context c) {
+        Log.d(TAG, "try to signout");
         mAuth.signOut();
-        updateUI(null);
+        updateUI(null,c);
     }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(FirebaseUser user, Context c) {
         if (user != null) {
             mStatusMessage.setText("Successfully logged in");
             findViewById(R.id.signInButton).setEnabled(false);
-            findViewById(R.id.signOutButton).setEnabled(true);
+            Intent i = new Intent(this, Tasks.class);
+            startActivity(i);
+            finish();
             /**
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
                     user.getEmail(), user.isEmailVerified()));
@@ -110,7 +121,12 @@ public class EmailPasswordActivity extends MainActivity implements
         } else {
             mStatusMessage.setText("Not signed in");
             findViewById(R.id.signInButton).setEnabled(true);
-            findViewById(R.id.signOutButton).setEnabled(false);
+            if(c != null){
+                Intent i = new Intent(c, EmailPasswordActivity.class);
+                startActivity(i);
+                finish();
+            }
+
             /**
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
@@ -124,15 +140,10 @@ public class EmailPasswordActivity extends MainActivity implements
 
     @Override
     public void onClick(View v) {
-        Log.d("Homo","nix da");
         int i = v.getId();
 
         if (i == R.id.signInButton) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-        } else if (i == R.id.signOutButton) {
-            signOut();
-        } /**else if (i == R.id.verifyEmailButton) {
-            sendEmailVerification();
-        }*/
+        }
     }
 }
