@@ -195,7 +195,7 @@ public class Tasks extends AppCompatActivity
     public String getCurrentUserID(){
         //Get userID of current user
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        String userID = mAuth.getUid();
+        return mAuth.getUid();
     }
 
 }
