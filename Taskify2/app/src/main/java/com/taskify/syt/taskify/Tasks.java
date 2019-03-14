@@ -20,6 +20,7 @@ import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.annotations.Nullable;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -68,11 +70,13 @@ public class Tasks extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         Log.wtf(TAG,"creating ...");
+        /**
         try {
             populateData();
         } catch (ParseException e) {
             e.printStackTrace();
         }
+         */
         bindArrayAdapter();
     }
 
@@ -106,7 +110,6 @@ public class Tasks extends AppCompatActivity
         }else if (id == R.id.action_signOut){
 
             EmailPasswordActivity epa = EmailPasswordActivity.getInstance();
-            Log.wtf(TAG,epa.toString());
             epa.signOut(getBaseContext());
             finish();
         }
@@ -145,19 +148,25 @@ public class Tasks extends AppCompatActivity
         final List<String> items = new ArrayList<String>();
         final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
         listView.setAdapter(itemsadapter);
-        db.collection("tasks").document("test").addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
+        //Get userID of currently logged in User
+        String userID = getCurrentUserID();
+
+        db.collection("user").document(userID).collection("tasks").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException exception) {
+                if (exception != null) {
+                    Log.w(TAG, "Listen failed.", exception);
                     return;
                 }
-                if (snapshot != null && snapshot.exists()) {
-                    Task t =  snapshot.toObject(Task.class);
+                if (queryDocumentSnapshots != null) {
+                    List<DocumentSnapshot> listOfDocuments = queryDocumentSnapshots.getDocuments();
+                    List<Task> taskList = new ArrayList<Task>();
+                    for (DocumentSnapshot doc : listOfDocuments) {
+                        taskList.add(doc.toObject(Task.class));
+                        items.add(doc.toObject(Task.class).getDescription());
+                    }
 
-                    Log.d(TAG, "Current data: " + t.getDescription());
-                    items.add(t.getDescription());
                     itemsadapter.notifyDataSetChanged();
                 } else {
                     Log.d(TAG, "Current data: null");
@@ -168,29 +177,25 @@ public class Tasks extends AppCompatActivity
 
     }
 
-    public void populateData() throws ParseException {
+    public void populateData(Task t) throws ParseException {
         //tDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String newdateString = dateFormat.format(date);
-        Date newdate = dateFormat.parse(newdateString);
-        Task t = new Task("this is a task",newdate,"testid1");
-        db.collection("tasks")
-                .add(t)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-        //tDatabase.child("tasks").push();
-        //tDatabase.child("tasks").child(t.user_id).setValue(t);
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //Date date = new Date();
+        //String newdateString = dateFormat.format(date);
+        //Date newdate = dateFormat.parse(newdateString);
+
+
+        if(getCurrentUserID() != null) {
+            //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
+            db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
+        }
     }
+
+    public String getCurrentUserID(){
+        //Get userID of current user
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String userID = mAuth.getUid();
+    }
+
 }

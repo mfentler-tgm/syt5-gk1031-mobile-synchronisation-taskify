@@ -28,6 +28,7 @@ public class EmailPasswordActivity extends MainActivity implements
     private TextView mStatusMessage;
 
     private static EmailPasswordActivity instance;
+    private String userID;
 
     public static EmailPasswordActivity getInstance() {
         return instance;
@@ -74,6 +75,10 @@ public class EmailPasswordActivity extends MainActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            if (user != null)
+                                userID = user.getUid();
+
                             updateUI(user, null);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -145,5 +150,9 @@ public class EmailPasswordActivity extends MainActivity implements
         if (i == R.id.signInButton) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         }
+    }
+
+    public String getUserID(){
+        return userID;
     }
 }
