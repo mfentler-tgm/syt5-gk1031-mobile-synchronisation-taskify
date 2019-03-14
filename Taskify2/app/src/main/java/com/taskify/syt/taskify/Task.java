@@ -1,6 +1,7 @@
 package com.taskify.syt.taskify;
 
 import java.util.Date;
+import java.util.Timer;
 
 public class Task {
 
@@ -8,12 +9,32 @@ public class Task {
     private Date createdOn;
     private String user_id;
     private String taskTag;
+    private String state;
+    //private Timer timeSpentOnTask;
 
-    public Task(String description, Date createdOn, String user_id, String taskTag) {
-        this.description = description;
+    public Task(String description, Date createdOn, String user_id, String taskTag, String state) {
+        if(description != null)
+            this.description = description;
+        else{
+            throw new IllegalArgumentException("Task needs a description name");
+        }
+
         this.createdOn = createdOn;
-        this.user_id = user_id;
-        this.taskTag = taskTag;
+        if(user_id != null)
+            this.user_id = user_id;
+        if(taskTag != null)
+            this.taskTag = taskTag;
+        //this.timeSpentOnTask = new Timer();
+        if(state != null) {
+            if (state.equals("active") || state.equals("paused") || state.equals("finished")) {
+                this.state = state;
+            } else {
+                this.state = "paused";
+            }
+        }else{
+            this.state = "paused";
+        }
+
     }
     public Task() {
         // Default constructor required for calls to DataSnapshot.getValue(Task.class)
@@ -45,4 +66,7 @@ public class Task {
 
     public String getTaskTag(){return this.taskTag;}
     public void setTaskTag(String tag){this.taskTag = tag;}
+
+    public String getState(){return this.state;}
+    public void setState(String state){this.state = state;}
 }

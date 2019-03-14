@@ -145,8 +145,9 @@ public class Tasks extends AppCompatActivity
     public void bindArrayAdapter() {
         final ListView listView = findViewById(R.id.listviewtasks);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final List<String> items = new ArrayList<String>();
-        final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
+        final ArrayList<Task> items = new ArrayList<Task>();
+        //final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
+        final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this,items);
         listView.setAdapter(itemsadapter);
 
         //Get userID of currently logged in User
@@ -164,7 +165,8 @@ public class Tasks extends AppCompatActivity
                     List<Task> taskList = new ArrayList<Task>();
                     for (DocumentSnapshot doc : listOfDocuments) {
                         taskList.add(doc.toObject(Task.class));
-                        items.add(doc.toObject(Task.class).getDescription());
+                        items.add(doc.toObject(Task.class));
+                        //items.add(doc.toObject(Task.class).getDescription());
                     }
 
                     itemsadapter.notifyDataSetChanged();
