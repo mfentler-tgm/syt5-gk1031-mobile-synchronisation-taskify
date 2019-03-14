@@ -39,18 +39,11 @@
         android:padding="5dp"
         app:layout_constraintStart_toEndOf="@+id/space2"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Task2" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Task1" />
+    <ListView
+        android:id="@+id/listviewtasks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
