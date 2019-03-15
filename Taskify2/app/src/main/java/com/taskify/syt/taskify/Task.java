@@ -26,7 +26,7 @@ public class Task {
             this.taskTag = taskTag;
         //this.timeSpentOnTask = new Timer();
         if(state != null) {
-            if (state.equals("active") || state.equals("paused") || state.equals("finished")) {
+            if (state.equals("active") || state.equals("paused") || state.equals("finished") || state.equals("unactive")) {
                 this.state = state;
             } else {
                 this.state = "paused";
