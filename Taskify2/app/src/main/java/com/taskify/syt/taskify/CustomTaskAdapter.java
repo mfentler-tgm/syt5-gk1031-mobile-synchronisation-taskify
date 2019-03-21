@@ -20,11 +20,13 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View listItem = convertView;
+
         if(listItem == null)
             listItem = LayoutInflater.from(getContext()).inflate(
                     R.layout.custom_taskview,parent,false);
 
         Task currentTask = getItem(position);
+
 
         TextView taskStatus = (TextView)listItem.findViewById(R.id.taskStatus);
         TextView taskTag = (TextView)listItem.findViewById(R.id.taskTag);
