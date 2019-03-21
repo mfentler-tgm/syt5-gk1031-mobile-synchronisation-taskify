@@ -69,14 +69,16 @@
                         android:layout_width="51dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Start" />
+                        android:text="Start"
+                        android:focusable="false"/>
 
                     <Button
                         android:id="@+id/finishButton"
                         android:layout_width="51dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Finish" />
+                        android:text="Finish"
+                        android:focusable="false"/>
 
                 </LinearLayout>
 
