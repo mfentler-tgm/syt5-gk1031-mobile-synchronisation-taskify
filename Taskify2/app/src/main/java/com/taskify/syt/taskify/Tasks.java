@@ -15,8 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +46,7 @@ public class Tasks extends AppCompatActivity
 
     private static final String TAG = "kurwaa";
     private DatabaseReference tDatabase;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +82,7 @@ public class Tasks extends AppCompatActivity
         }
          */
         bindArrayAdapter();
+        setListeners();
     }
 
     @Override
@@ -143,8 +147,19 @@ public class Tasks extends AppCompatActivity
         return true;
     }
 
+    public void setListeners() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String taskTitle = ((TextView)view.findViewById(R.id.taskDescription)).getText().toString();
+                Log.d(TAG,taskTitle);
+            }
+        });
+    }
+
     public void bindArrayAdapter() {
-        final ListView listView = findViewById(R.id.listviewtasks);
+        listView = findViewById(R.id.listviewtasks);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final ArrayList<Task> items = new ArrayList<Task>();
         //final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
@@ -178,6 +193,7 @@ public class Tasks extends AppCompatActivity
         });
 
 
+
     }
 
     public void populateData(Task t) throws ParseException {
@@ -200,5 +216,7 @@ public class Tasks extends AppCompatActivity
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         return mAuth.getUid();
     }
+
+
 
 }
