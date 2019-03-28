@@ -7,9 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CustomTaskAdapter extends ArrayAdapter<Task> {
 
@@ -31,11 +35,19 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
         TextView taskStatus = (TextView)listItem.findViewById(R.id.taskStatus);
         TextView taskTag = (TextView)listItem.findViewById(R.id.taskTag);
         TextView taskDescription = (TextView)listItem.findViewById(R.id.taskDescription);
-
+        Button startstopButton = listItem.findViewById(R.id.startStopButton);
+        startstopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tasks.getInstance().startTaskTimer((LinearLayout)v.getParent().getParent().getParent());
+            }
+        });
         taskStatus.setText(currentTask.getState());
         taskTag.setText(currentTask.getTaskTag());
         taskDescription.setText(currentTask.getDescription());
 
+
         return listItem;
     }
+
 }

@@ -3,9 +3,11 @@ package com.taskify.syt.taskify;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,8 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Tasks extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,6 +54,7 @@ public class Tasks extends AppCompatActivity
     private static final String TAG = "kurwaa";
     private DatabaseReference tDatabase;
     private ListView listView;
+    private static Tasks instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +68,7 @@ public class Tasks extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 DialogActivity dialogFragment = DialogActivity.newInstance();
-                dialogFragment.show(getSupportFragmentManager(),"dialog");
+                dialogFragment.show(getSupportFragmentManager(), "dialog");
             }
         });
 
@@ -73,16 +81,17 @@ public class Tasks extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Log.wtf(TAG,"creating ...");
+        Log.wtf(TAG, "creating ...");
         /**
-        try {
-            populateData();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+         try {
+         populateData();
+         } catch (ParseException e) {
+         e.printStackTrace();
+         }
          */
         bindArrayAdapter();
         setListeners();
+        instance = this;
     }
 
     @Override
@@ -112,7 +121,7 @@ public class Tasks extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }else if (id == R.id.action_signOut){
+        } else if (id == R.id.action_signOut) {
 
             EmailPasswordActivity epa = EmailPasswordActivity.getInstance();
             epa.signOut(getBaseContext());
@@ -131,7 +140,7 @@ public class Tasks extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-            Log.wtf(TAG,"clicking");
+            Log.wtf(TAG, "clicking");
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -151,9 +160,20 @@ public class Tasks extends AppCompatActivity
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String taskTitle = ((TextView)view.findViewById(R.id.taskDescription)).getText().toString();
-                Log.d(TAG,taskTitle);
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                String taskTitle = ((TextView) view.findViewById(R.id.taskDescription)).getText().toString();
+                Log.d(TAG, taskTitle);
+            }
+        });
+        View taskView = getLayoutInflater().inflate(R.layout.custom_taskview,null);
+        Button button = taskView.findViewById(R.id.startStopButton);
+        Log.d(TAG, button.getText().toString());
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"on click button");
+                Log.d(TAG,v.toString());
+                startTaskTimer(v);
             }
         });
     }
@@ -163,7 +183,7 @@ public class Tasks extends AppCompatActivity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final ArrayList<Task> items = new ArrayList<Task>();
         //final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
-        final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this,items);
+        final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this, items);
         listView.setAdapter(itemsadapter);
 
         //Get userID of currently logged in User
@@ -193,7 +213,6 @@ public class Tasks extends AppCompatActivity
         });
 
 
-
     }
 
     public void populateData(Task t) throws ParseException {
@@ -205,18 +224,43 @@ public class Tasks extends AppCompatActivity
         //Date newdate = dateFormat.parse(newdateString);
 
 
-        if(getCurrentUserID() != null) {
+        if (getCurrentUserID() != null) {
             //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
             db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
         }
     }
 
-    public String getCurrentUserID(){
+    public String getCurrentUserID() {
         //Get userID of current user
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         return mAuth.getUid();
     }
 
+    public void startTaskTimer(final View v) {
+        Timer T=new Timer();
+        LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+        final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+        Log.d(TAG, parentView.toString());
+        T.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+                        Log.d(TAG, String.valueOf(count));
+                        count++;
+                        ((TextView)v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
+                    }
+                });
+            }
+        }, 1000, 1000);
+    }
 
+    public static Tasks getInstance() {
+        return instance;
+    }
 
 }
