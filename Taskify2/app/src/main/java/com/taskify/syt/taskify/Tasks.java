@@ -1,5 +1,6 @@
 package com.taskify.syt.taskify;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.NonNull;
@@ -55,6 +56,8 @@ public class Tasks extends AppCompatActivity
     private DatabaseReference tDatabase;
     private ListView listView;
     private static Tasks instance;
+    private Timer T;
+    private static boolean oneTaskActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,26 +240,53 @@ public class Tasks extends AppCompatActivity
     }
 
     public void startTaskTimer(final View v) {
-        Timer T=new Timer();
-        LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
-        final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
-        Log.d(TAG, parentView.toString());
-        T.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
-                        Log.d(TAG, String.valueOf(count));
-                        count++;
-                        ((TextView)v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
-                    }
-                });
-            }
-        }, 1000, 1000);
+        if(!oneTaskActive) {
+            oneTaskActive = true;
+            T = new Timer();
+            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+            Log.d(TAG, parentView.toString());
+            T.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+                            Log.d(TAG, String.valueOf(count));
+                            count++;
+                            ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
+
+                            //Set Background Color of active Task
+                            ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
+                            ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(155, 244, 66));
+                        }
+                    });
+                }
+            }, 1000, 1000);
+        }
+    }
+
+    public void stopTaskTimer(final View v) {
+        if(oneTaskActive) {
+            T.cancel();
+            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+            Log.d(TAG, parentView.toString());
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+                    Log.d(TAG, String.valueOf(count));
+
+                    //Set Background Color of active Task
+                    ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
+                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 255, 255));
+                }
+            });
+            oneTaskActive = false;
+        }
     }
 
     public static Tasks getInstance() {
