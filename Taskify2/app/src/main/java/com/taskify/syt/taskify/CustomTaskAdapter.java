@@ -57,4 +57,13 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
         return listItem;
     }
 
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return true;
+    }
 }
