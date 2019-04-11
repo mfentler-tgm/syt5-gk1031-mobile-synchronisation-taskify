@@ -29,7 +29,7 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
             listItem = LayoutInflater.from(getContext()).inflate(
                     R.layout.custom_taskview,parent,false);
 
-        Task currentTask = getItem(position);
+        final Task currentTask = getItem(position);
 
 
         TextView taskStatus = (TextView)listItem.findViewById(R.id.taskStatus);
@@ -39,14 +39,14 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
         startstopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tasks.getInstance().startTaskTimer((LinearLayout)v.getParent().getParent().getParent());
+                Tasks.getInstance().startTaskTimer((LinearLayout)v.getParent().getParent().getParent(), currentTask);
             }
         });
         Button finishButton = listItem.findViewById(R.id.finishButton);
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tasks.getInstance().stopTaskTimer((LinearLayout)v.getParent().getParent().getParent());
+                Tasks.getInstance().stopTaskTimer((LinearLayout)v.getParent().getParent().getParent(), currentTask);
             }
         });
         taskStatus.setText(currentTask.getState());

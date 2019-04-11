@@ -1,5 +1,6 @@
 package com.taskify.syt.taskify;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.Timer;
 
@@ -10,6 +11,7 @@ public class Task {
     private String user_id;
     private String taskTag;
     private String state;
+    private int taskDuration;
     //private Timer timeSpentOnTask;
 
     public Task(String description, Date createdOn, String user_id, String taskTag, String state) {
@@ -34,6 +36,7 @@ public class Task {
         }else{
             this.state = "paused";
         }
+        this.taskDuration = 0;
 
     }
     public Task() {
@@ -69,4 +72,7 @@ public class Task {
 
     public String getState(){return this.state;}
     public void setState(String state){this.state = state;}
+
+    public int getTaskDuration(){return this.taskDuration;}
+    public void setTaskDuration(int duration){this.taskDuration = duration;}
 }

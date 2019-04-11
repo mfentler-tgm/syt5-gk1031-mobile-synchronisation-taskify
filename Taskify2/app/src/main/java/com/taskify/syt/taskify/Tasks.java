@@ -239,7 +239,7 @@ public class Tasks extends AppCompatActivity
         return mAuth.getUid();
     }
 
-    public void startTaskTimer(final View v) {
+    public void startTaskTimer(final View v, final Task task) {
         if(!oneTaskActive) {
             oneTaskActive = true;
             T = new Timer();
@@ -257,6 +257,7 @@ public class Tasks extends AppCompatActivity
                             Log.d(TAG, String.valueOf(count));
                             count++;
                             ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
+                            task.setTaskDuration(count);
 
                             //Enable Finish Button Disable Start Button
                             (v.findViewById(R.id.startStopButton)).setEnabled(false);
@@ -264,6 +265,7 @@ public class Tasks extends AppCompatActivity
 
                             //Set Background Color of active Task
                             ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
+                            task.setState("active");
                             ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(155, 244, 66));
                         }
                     });
@@ -272,7 +274,7 @@ public class Tasks extends AppCompatActivity
         }
     }
 
-    public void stopTaskTimer(final View v) {
+    public void stopTaskTimer(final View v, final Task task) {
         if(oneTaskActive) {
             T.cancel();
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
@@ -285,7 +287,7 @@ public class Tasks extends AppCompatActivity
                 @Override
                 public void run() {
                     int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
-                    Log.d(TAG, String.valueOf(count));
+                    task.setTaskDuration(count);
 
                     //Enable Finish Button Disable Start Button
                     (v.findViewById(R.id.startStopButton)).setEnabled(true);
@@ -293,6 +295,7 @@ public class Tasks extends AppCompatActivity
 
                     //Set Background Color of active Task
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
+                    task.setState("paused");
                     ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(244, 209, 66));
                 }
             });
@@ -322,6 +325,8 @@ public class Tasks extends AppCompatActivity
     }
 
     public void manuallyStopTimerOnExit(){
-        this.T.cancel();
+        try {
+            this.T.cancel();
+        }catch(NullPointerException e){};
     }
 }
