@@ -246,6 +246,12 @@ public class Tasks extends AppCompatActivity
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
             Log.d(TAG, parentView.toString());
+            for(int i=0; i<listView.getChildCount();i++) {
+                Log.d(TAG,"In Listview loop");
+                Log.d(TAG,listView.getChildAt(i).toString());
+                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+            }
             T.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -277,7 +283,9 @@ public class Tasks extends AppCompatActivity
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
             Log.d(TAG, parentView.toString());
-
+            for(int i=0; i<listView.getChildCount();i++) {
+                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(true);
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
