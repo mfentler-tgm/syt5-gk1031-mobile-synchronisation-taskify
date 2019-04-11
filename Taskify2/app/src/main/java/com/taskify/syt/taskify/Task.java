@@ -12,6 +12,7 @@ public class Task {
     private String taskTag;
     private String state;
     private int taskDuration;
+    private String documentID;
     //private Timer timeSpentOnTask;
 
     public Task(String description, Date createdOn, String user_id, String taskTag, String state) {
@@ -75,4 +76,7 @@ public class Task {
 
     public int getTaskDuration(){return this.taskDuration;}
     public void setTaskDuration(int duration){this.taskDuration = duration;}
+
+    public void setDocumentID(String id){this.documentID = id;}
+    public String getDocumentID(){return this.documentID;}
 }

@@ -171,6 +171,7 @@ public class Tasks extends AppCompatActivity
         View taskView = getLayoutInflater().inflate(R.layout.custom_taskview,null);
         Button button = taskView.findViewById(R.id.startStopButton);
         Log.d(TAG, button.getText().toString());
+        /**
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,6 +180,7 @@ public class Tasks extends AppCompatActivity
                 startTaskTimer(v);
             }
         });
+         */
     }
 
     public void bindArrayAdapter() {
@@ -203,6 +205,8 @@ public class Tasks extends AppCompatActivity
                     items.clear();
                     List<DocumentSnapshot> listOfDocuments = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot doc : listOfDocuments) {
+                        doc.toObject(Task.class).setDocumentID(doc.getId());
+
                         if(doc.toObject(Task.class).getState().equals("active")) {
                             items.add(0,doc.toObject(Task.class));
                         } else {
@@ -261,7 +265,6 @@ public class Tasks extends AppCompatActivity
                             Log.d(TAG, String.valueOf(count));
                             count++;
                             ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
-                            task.setTaskDuration(count);
 
                             //Enable Finish Button Disable Start Button
                             (v.findViewById(R.id.startStopButton)).setEnabled(false);
@@ -269,8 +272,11 @@ public class Tasks extends AppCompatActivity
 
                             //Set Background Color of active Task
                             ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
-                            task.setState("active");
                             ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(155, 244, 66));
+
+                            task.setTaskDuration(count);
+                            task.setState("active");
+                            updateTaskInDb(task);
                         }
                     });
                 }
@@ -291,7 +297,6 @@ public class Tasks extends AppCompatActivity
                 @Override
                 public void run() {
                     int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
-                    task.setTaskDuration(count);
 
                     //Enable Finish Button Disable Start Button
                     (v.findViewById(R.id.startStopButton)).setEnabled(true);
@@ -299,8 +304,12 @@ public class Tasks extends AppCompatActivity
 
                     //Set Background Color of active Task
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
-                    task.setState("paused");
                     ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(244, 209, 66));
+
+
+                    task.setTaskDuration(count);
+                    task.setState("paused");
+                    updateTaskInDb(task);
                 }
             });
             oneTaskActive = false;
@@ -332,5 +341,19 @@ public class Tasks extends AppCompatActivity
         try {
             this.T.cancel();
         }catch(NullPointerException e){};
+    }
+
+    private void updateTaskInDb(Task t){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //Date date = new Date();
+        //String newdateString = dateFormat.format(date);
+        //Date newdate = dateFormat.parse(newdateString);
+        String docID = t.getDocumentID();
+
+        if (getCurrentUserID() != null) {
+            //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
+            db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).update(t);
+        }
     }
 }
