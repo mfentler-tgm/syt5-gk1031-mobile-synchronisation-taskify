@@ -93,8 +93,9 @@ public class DialogActivity extends DialogFragment {
                         } catch(Exception e) {
                             Log.d("dialog",e.getMessage());
                         }
-                        Intent intent = new Intent(DialogActivity.this.getContext(),Tasks.class);
-                        DialogActivity.this.startActivity(intent);
+                        //Intent intent = new Intent(DialogActivity.this.getContext(),Tasks.class);
+
+                        DialogActivity.this.getDialog().cancel();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
