@@ -290,7 +290,7 @@ public class Tasks extends AppCompatActivity
 
                     //Set Background Color of active Task
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
-                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 255, 255));
+                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(244, 209, 66));
                 }
             });
             oneTaskActive = false;
@@ -299,6 +299,18 @@ public class Tasks extends AppCompatActivity
 
     public static Tasks getInstance() {
         return instance;
+    }
+
+    public void setOneTaskActive(boolean status){
+        oneTaskActive = status;
+    }
+
+    public void enableDisableAllButtons(boolean status){
+        if(status == true){
+
+        }else{
+
+        }
     }
 
 }
