@@ -250,12 +250,7 @@ public class Tasks extends AppCompatActivity
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
             Log.d(TAG, parentView.toString());
-            for(int i=0; i<listView.getChildCount();i++) {
-                Log.d(TAG,"In Listview loop");
-                Log.d(TAG,listView.getChildAt(i).toString());
-                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(false);
-                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
-            }
+            enableDisableAllButtons(true);
             T.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -287,9 +282,9 @@ public class Tasks extends AppCompatActivity
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
             Log.d(TAG, parentView.toString());
-            for(int i=0; i<listView.getChildCount();i++) {
-                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(true);
-            }
+
+            enableDisableAllButtons(false);
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -302,7 +297,7 @@ public class Tasks extends AppCompatActivity
 
                     //Set Background Color of active Task
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
-                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 255, 255));
+                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(244, 209, 66));
                 }
             });
             oneTaskActive = false;
@@ -313,4 +308,24 @@ public class Tasks extends AppCompatActivity
         return instance;
     }
 
+    public void setOneTaskActive(boolean status){
+        oneTaskActive = status;
+    }
+
+    public void enableDisableAllButtons(boolean status){
+        if(status == true){
+            for(int i=0; i<listView.getChildCount();i++) {
+                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+            }
+        }else{
+            for(int i=0; i<listView.getChildCount();i++) {
+                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(true);
+            }
+        }
+    }
+
+    public void manuallyStopTimerOnExit(){
+        this.T.cancel();
+    }
 }

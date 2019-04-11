@@ -100,8 +100,11 @@ public class EmailPasswordActivity extends MainActivity implements
     }
 
     public void signOut(Context c) {
-        Log.d(TAG, "try to signout");
         mAuth.signOut();
+        Tasks t = Tasks.getInstance();
+        t.enableDisableAllButtons(false);
+        t.setOneTaskActive(false);
+        t.manuallyStopTimerOnExit();
         updateUI(null,c);
     }
 
