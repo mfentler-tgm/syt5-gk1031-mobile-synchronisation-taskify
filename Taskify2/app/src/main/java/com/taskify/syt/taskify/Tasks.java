@@ -263,6 +263,10 @@ public class Tasks extends AppCompatActivity
                             count++;
                             ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
 
+                            //Enable Finish Button Disable Start Button
+                            (v.findViewById(R.id.startStopButton)).setEnabled(false);
+                            (v.findViewById(R.id.finishButton)).setEnabled(true);
+
                             //Set Background Color of active Task
                             ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
                             ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(155, 244, 66));
@@ -287,6 +291,10 @@ public class Tasks extends AppCompatActivity
                 public void run() {
                     int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
                     Log.d(TAG, String.valueOf(count));
+
+                    //Enable Finish Button Disable Start Button
+                    (v.findViewById(R.id.startStopButton)).setEnabled(true);
+                    (v.findViewById(R.id.finishButton)).setEnabled(false);
 
                     //Set Background Color of active Task
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
