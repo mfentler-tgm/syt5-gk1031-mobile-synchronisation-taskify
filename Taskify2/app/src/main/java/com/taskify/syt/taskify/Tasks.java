@@ -200,11 +200,15 @@ public class Tasks extends AppCompatActivity
                     return;
                 }
                 if (queryDocumentSnapshots != null) {
+                    items.clear();
                     List<DocumentSnapshot> listOfDocuments = queryDocumentSnapshots.getDocuments();
-                    List<Task> taskList = new ArrayList<Task>();
                     for (DocumentSnapshot doc : listOfDocuments) {
-                        taskList.add(doc.toObject(Task.class));
-                        items.add(doc.toObject(Task.class));
+                        if(doc.toObject(Task.class).getState().equals("active")) {
+                            items.add(0,doc.toObject(Task.class));
+                        } else {
+                            items.add(doc.toObject(Task.class));
+                        }
+
                         //items.add(doc.toObject(Task.class).getDescription());
                     }
 
