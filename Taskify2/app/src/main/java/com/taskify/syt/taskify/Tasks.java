@@ -1,11 +1,14 @@
 package com.taskify.syt.taskify;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,19 +18,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.annotations.NotNull;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -35,12 +46,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Tasks extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "kurwaa";
     private DatabaseReference tDatabase;
+    private ListView listView;
+    private static Tasks instance;
+    private Timer T;
+    private static boolean oneTaskActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +70,8 @@ public class Tasks extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                DialogActivity dialogFragment = DialogActivity.newInstance();
+                dialogFragment.show(getSupportFragmentManager(), "dialog");
             }
         });
 
@@ -67,13 +84,17 @@ public class Tasks extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Log.wtf(TAG,"creating ...");
-        try {
-            populateData();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Log.wtf(TAG, "creating ...");
+        /**
+         try {
+         populateData();
+         } catch (ParseException e) {
+         e.printStackTrace();
+         }
+         */
         bindArrayAdapter();
+        setListeners();
+        instance = this;
     }
 
     @Override
@@ -103,10 +124,9 @@ public class Tasks extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }else if (id == R.id.action_signOut){
+        } else if (id == R.id.action_signOut) {
 
             EmailPasswordActivity epa = EmailPasswordActivity.getInstance();
-            Log.wtf(TAG,epa.toString());
             epa.signOut(getBaseContext());
             finish();
         }
@@ -123,7 +143,7 @@ public class Tasks extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-            Log.wtf(TAG,"clicking");
+            Log.wtf(TAG, "clicking");
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -139,25 +159,63 @@ public class Tasks extends AppCompatActivity
         return true;
     }
 
-    public void bindArrayAdapter() {
-        final ListView listView = findViewById(R.id.listviewtasks);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final List<String> items = new ArrayList<String>();
-        final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
-        listView.setAdapter(itemsadapter);
-        db.collection("tasks").document("test").addSnapshotListener(new EventListener<DocumentSnapshot>() {
+    public void setListeners() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                String taskTitle = ((TextView) view.findViewById(R.id.taskDescription)).getText().toString();
+                Log.d(TAG, taskTitle);
+            }
+        });
+        View taskView = getLayoutInflater().inflate(R.layout.custom_taskview,null);
+        Button button = taskView.findViewById(R.id.startStopButton);
+        Log.d(TAG, button.getText().toString());
+        /**
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"on click button");
+                Log.d(TAG,v.toString());
+                startTaskTimer(v);
+            }
+        });
+         */
+    }
+
+    public void bindArrayAdapter() {
+        listView = findViewById(R.id.listviewtasks);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final ArrayList<Task> items = new ArrayList<Task>();
+        //final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
+        final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this, items);
+        listView.setAdapter(itemsadapter);
+
+        //Get userID of currently logged in User
+        String userID = getCurrentUserID();
+
+        db.collection("user").document(userID).collection("tasks").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException exception) {
+                if (exception != null) {
+                    Log.w(TAG, "Listen failed.", exception);
                     return;
                 }
-                if (snapshot != null && snapshot.exists()) {
-                    Task t =  snapshot.toObject(Task.class);
+                if (queryDocumentSnapshots != null) {
+                    items.clear();
+                    List<DocumentSnapshot> listOfDocuments = queryDocumentSnapshots.getDocuments();
+                    for (DocumentSnapshot doc : listOfDocuments) {
+                        doc.toObject(Task.class).setDocumentID(doc.getId());
 
-                    Log.d(TAG, "Current data: " + t.getDescription());
-                    items.add(t.getDescription());
+                        if(doc.toObject(Task.class).getState().equals("active")) {
+                            items.add(0,doc.toObject(Task.class));
+                        } else {
+                            items.add(doc.toObject(Task.class));
+                        }
+
+                        //items.add(doc.toObject(Task.class).getDescription());
+                    }
+
                     itemsadapter.notifyDataSetChanged();
                 } else {
                     Log.d(TAG, "Current data: null");
@@ -168,29 +226,134 @@ public class Tasks extends AppCompatActivity
 
     }
 
-    public void populateData() throws ParseException {
+    public void populateData(Task t) throws ParseException {
         //tDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String newdateString = dateFormat.format(date);
-        Date newdate = dateFormat.parse(newdateString);
-        Task t = new Task("this is a task",newdate,"testid1");
-        db.collection("tasks")
-                .add(t)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-        //tDatabase.child("tasks").push();
-        //tDatabase.child("tasks").child(t.user_id).setValue(t);
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //Date date = new Date();
+        //String newdateString = dateFormat.format(date);
+        //Date newdate = dateFormat.parse(newdateString);
+
+
+        if (getCurrentUserID() != null) {
+            //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
+            db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
+        }
+    }
+
+    public String getCurrentUserID() {
+        //Get userID of current user
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        return mAuth.getUid();
+    }
+
+    public void startTaskTimer(final View v, final Task task) {
+        if(!oneTaskActive) {
+            oneTaskActive = true;
+            T = new Timer();
+            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+            Log.d(TAG, parentView.toString());
+            enableDisableAllButtons(true);
+            T.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+                            Log.d(TAG, String.valueOf(count));
+                            count++;
+                            ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
+
+                            //Enable Finish Button Disable Start Button
+                            (v.findViewById(R.id.startStopButton)).setEnabled(false);
+                            (v.findViewById(R.id.finishButton)).setEnabled(true);
+
+                            //Set Background Color of active Task
+                            ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
+                            ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(155, 244, 66));
+
+                            task.setTaskDuration(count);
+                            task.setState("active");
+                            updateTaskInDb(task);
+                        }
+                    });
+                }
+            }, 1000, 1000);
+        }
+    }
+
+    public void stopTaskTimer(final View v, final Task task) {
+        if(oneTaskActive) {
+            T.cancel();
+            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+            Log.d(TAG, parentView.toString());
+
+            enableDisableAllButtons(false);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+
+                    //Enable Finish Button Disable Start Button
+                    (v.findViewById(R.id.startStopButton)).setEnabled(true);
+                    (v.findViewById(R.id.finishButton)).setEnabled(false);
+
+                    //Set Background Color of active Task
+                    ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
+                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(244, 209, 66));
+
+
+                    task.setTaskDuration(count);
+                    task.setState("paused");
+                    updateTaskInDb(task);
+                }
+            });
+            oneTaskActive = false;
+        }
+    }
+
+    public static Tasks getInstance() {
+        return instance;
+    }
+
+    public void setOneTaskActive(boolean status){
+        oneTaskActive = status;
+    }
+
+    public void enableDisableAllButtons(boolean status){
+        if(status == true){
+            for(int i=0; i<listView.getChildCount();i++) {
+                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+            }
+        }else{
+            for(int i=0; i<listView.getChildCount();i++) {
+                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(true);
+            }
+        }
+    }
+
+    public void manuallyStopTimerOnExit(){
+        try {
+            this.T.cancel();
+        }catch(NullPointerException e){};
+    }
+
+    private void updateTaskInDb(Task t){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //Date date = new Date();
+        //String newdateString = dateFormat.format(date);
+        //Date newdate = dateFormat.parse(newdateString);
+        String docID = t.getDocumentID();
+
+        if (getCurrentUserID() != null) {
+            //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
+            db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).update(t);
+        }
     }
 }
