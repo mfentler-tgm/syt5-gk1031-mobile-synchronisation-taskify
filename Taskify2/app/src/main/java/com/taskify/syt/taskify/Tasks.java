@@ -268,7 +268,7 @@ public class Tasks extends AppCompatActivity
 
                             //Enable Finish Button Disable Start Button
                             (v.findViewById(R.id.startStopButton)).setEnabled(false);
-                            (v.findViewById(R.id.finishButton)).setEnabled(true);
+                            (v.findViewById(R.id.stopButton)).setEnabled(true);
 
                             //Set Background Color of active Task
                             ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
@@ -300,7 +300,7 @@ public class Tasks extends AppCompatActivity
 
                     //Enable Finish Button Disable Start Button
                     (v.findViewById(R.id.startStopButton)).setEnabled(true);
-                    (v.findViewById(R.id.finishButton)).setEnabled(false);
+                    (v.findViewById(R.id.stopButton)).setEnabled(false);
 
                     //Set Background Color of active Task
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("paused");
@@ -328,7 +328,7 @@ public class Tasks extends AppCompatActivity
         if(status == true){
             for(int i=0; i<listView.getChildCount();i++) {
                 listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(false);
-                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
             }
         }else{
             for(int i=0; i<listView.getChildCount();i++) {
@@ -353,7 +353,7 @@ public class Tasks extends AppCompatActivity
 
         if (getCurrentUserID() != null) {
             //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
-            db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).update(t);
+            //db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).update(t);
         }
     }
 }

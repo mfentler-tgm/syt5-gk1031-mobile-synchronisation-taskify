@@ -92,7 +92,9 @@ Um gespeicherte Tasks genau einem Benutzer zuweisen zu können wurde ein Schema 
 
 Wird beim Speichern eines Tasks kein Name angegeben, dann wird von Firebase ein zufälliger Erstellt, wie man im Bild oben erkennen kann.
 
-### __Neue Tasks__
+### __Tasks aus der Datenbank auslesen__
+
+### __Neue Tasks erstellen__
 
 ### __Task starten__
 
