@@ -35,7 +35,7 @@ Weiters muss ganz unten im File folgende Line hinzugefügt werden:
 apply plugin: 'com.google.gms.google-services'
 ```
 
-### __Authentifizierung__
+### __Authentifizierung - "Firebase Authentication"__
 Für die Authentifizierung wurde __Firebase-Authentication__ verwendet. Um diese Firebase-Komponente zu verwenden wird beim Erstellen der App, in der Klasse _EmailPasswordActivity_ in der _onCreate()_-Methode, die private Variable _mAuth_ initialisiert. Diese wird im späteren Verlauf verwendet, um die Authentifizierungs-Methoden von Firebase ansprechen zu können.
 ```java
 // Initialize Firebase Auth
@@ -69,7 +69,28 @@ public void onComplete(@NonNull Task<AuthResult> task) {
         // ...
     }
 ```
-Für das __Ausloggen__ wird die Methode _mAuth.signOut()_ verwendet.
+Für das __Ausloggen__ wird die Methode _mAuth.signOut()_ verwendet.  
+
+War das Einloggen erfolgreich, dann wird in der Methode _updateUI()_ die neue Activity gestartet, die die Tasks des Users beinhaltet. Die Login-Activity wird daraufhin beendet, damit der Benutzer, beim Klicken des "Zurück-Buttons" auf seinem Smartphone, nicht wieder zur Login-Activity zurück kommen kann.
+```java
+//Start new activity
+Intent i = new Intent(this, Tasks.class);
+startActivity(i);
+//Finish old activity
+finish();
+```
+#### Gespeicherte Benutzer
+Neue Benutzer können in der Firebase Console, im Authentication Register, hinzugefügt und verwaltet werden.
+![documentationImages/savedUsers.JPG](documentationImages/savedUsers.JPG)
+
+### __Datenbank - "Firestore"__
+Firebase stellt für die Persisitierung von Daten zwei verschiedene Datenbanksysteme zur Verfügung. In diesem Projekt wurde "Firestore" gewählt, da das das neuere System von beiden ist und mehr Funktionen enthält.  
+Im Firestore werden Daten in Form von Collections und Documents gespeichert. Collections können Dokumente enthalten und die wiederrum weitere Collections. 
+
+Um gespeicherte Tasks genau einem Benutzer zuweisen zu können wurde ein Schema gewählt, in dem die unique BenutzerID als Name des Documents dient. In diesem Dokument ist dann eine task-Collection, die alle Tasks des Benutzers in Form eines Dokuments mit den Feldern "createdOn", "description", "state", "taskTag" und "user_id" speichert.
+![documentationImages/savedTasks.JPG](documentationImages/savedTasks.JPG)
+
+Wird beim Speichern eines Tasks kein Name angegeben, dann wird von Firebase ein zufälliger Erstellt, wie man im Bild oben erkennen kann.
 
 ### __Neue Tasks__
 
