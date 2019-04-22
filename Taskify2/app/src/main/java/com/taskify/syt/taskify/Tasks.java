@@ -169,7 +169,7 @@ public class Tasks extends AppCompatActivity
             }
         });
         View taskView = getLayoutInflater().inflate(R.layout.custom_taskview,null);
-        Button button = taskView.findViewById(R.id.startStopButton);
+        Button button = taskView.findViewById(R.id.startButton);
         Log.d(TAG, button.getText().toString());
         /**
         button.setOnClickListener(new View.OnClickListener() {
@@ -277,7 +277,7 @@ public class Tasks extends AppCompatActivity
                             ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
 
                             //Enable Finish Button Disable Start Button
-                            (v.findViewById(R.id.startStopButton)).setEnabled(false);
+                            (v.findViewById(R.id.startButton)).setEnabled(false);
                             (v.findViewById(R.id.stopButton)).setEnabled(true);
 
                             //Set Background Color of active Task
@@ -309,7 +309,7 @@ public class Tasks extends AppCompatActivity
                     int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
 
                     //Enable Finish Button Disable Start Button
-                    (v.findViewById(R.id.startStopButton)).setEnabled(true);
+                    (v.findViewById(R.id.startButton)).setEnabled(true);
                     (v.findViewById(R.id.stopButton)).setEnabled(false);
 
                     //Set Background Color of active Task
@@ -337,12 +337,12 @@ public class Tasks extends AppCompatActivity
     public void enableDisableAllButtons(boolean status){
         if(status == true){
             for(int i=0; i<listView.getChildCount();i++) {
-                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
                 listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
             }
         }else{
             for(int i=0; i<listView.getChildCount();i++) {
-                listView.getChildAt(i).findViewById(R.id.startStopButton).setEnabled(true);
+                listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
             }
         }
     }

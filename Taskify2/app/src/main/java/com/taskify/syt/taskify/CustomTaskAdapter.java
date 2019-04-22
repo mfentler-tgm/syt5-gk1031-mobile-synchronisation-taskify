@@ -31,12 +31,21 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
 
         final Task currentTask = getItem(position);
 
-
+        /** Get references */
         TextView taskStatus = (TextView)listItem.findViewById(R.id.taskStatus);
         TextView taskTag = (TextView)listItem.findViewById(R.id.taskTag);
         TextView taskDescription = (TextView)listItem.findViewById(R.id.taskDescription);
-        Button startstopButton = listItem.findViewById(R.id.startStopButton);
-        startstopButton.setOnClickListener(new View.OnClickListener() {
+        TextView taskDuration = (TextView)listItem.findViewById(R.id.taskDuration);
+
+        /** Set Values */
+        taskStatus.setText(currentTask.getState());
+        taskTag.setText(currentTask.getTaskTag());
+        taskDescription.setText(currentTask.getDescription());
+        taskDuration.setText(currentTask.getTaskDuration()+"");
+
+        /** Buttons */
+        Button startButton = listItem.findViewById(R.id.startButton);
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Tasks.getInstance().startTaskTimer((LinearLayout)v.getParent().getParent().getParent(), currentTask);
@@ -49,10 +58,6 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
                 Tasks.getInstance().stopTaskTimer((LinearLayout)v.getParent().getParent().getParent(), currentTask);
             }
         });
-        taskStatus.setText(currentTask.getState());
-        taskTag.setText(currentTask.getTaskTag());
-        taskDescription.setText(currentTask.getDescription());
-
 
         return listItem;
     }
