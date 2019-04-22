@@ -3,6 +3,7 @@ package com.taskify.syt.taskify;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,6 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
                     R.layout.custom_taskview,parent,false);
 
         final Task currentTask = getItem(position);
-
         /** Get references */
         TextView taskStatus = (TextView)listItem.findViewById(R.id.taskStatus);
         TextView taskTag = (TextView)listItem.findViewById(R.id.taskTag);

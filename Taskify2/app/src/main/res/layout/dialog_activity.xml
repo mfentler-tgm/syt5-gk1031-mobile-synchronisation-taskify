@@ -9,6 +9,21 @@
         android:background="#FFFFBB33"
         android:contentDescription="@string/app_name" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="Add new task" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="(by adding a new task, active task will be paused)" />
+
     <EditText
         android:id="@+id/taskTitle"
         android:layout_width="match_parent"

@@ -57,7 +57,8 @@ public class Tasks extends AppCompatActivity
     private ListView listView;
     private static Tasks instance;
     private Timer T;
-    private static boolean oneTaskActive = false;
+    private static boolean thereIsActiveTask = false;
+    private static Task activeTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,13 +210,11 @@ public class Tasks extends AppCompatActivity
                         Task t = doc.toObject(Task.class);
                         //Setting docID field in db if not already set
                         if(t.getDocumentID() == null){
-                            Log.d(TAG,"Task Object has no docID yet ...");
+                            //Log.d(TAG,"Task Object has no docID yet ...");
                             t.setDocumentID(doc.getId());
                             updateTaskInDb(t);
                         }
-                        Log.d(TAG,"Task Object should have docID now "+t.getDocumentID());
-                        //doc.toObject(Task.class).setDocumentID(doc.getId());
-                        //Log.d(TAG,"Setting id to: "+doc.getId());
+                        //Log.d(TAG,"Task Object should have docID now "+t.getDocumentID());
                         if(t.getState().equals("active")) {
                             items.add(0,t);
                         } else {
@@ -236,17 +235,8 @@ public class Tasks extends AppCompatActivity
     }
 
     public void populateData(Task t) throws ParseException {
-        //tDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        //Date date = new Date();
-        //String newdateString = dateFormat.format(date);
-        //Date newdate = dateFormat.parse(newdateString);
-
-
-        if (getCurrentUserID() != null) {
-            t.setUser_id(getCurrentUserID());
-            //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
+        if(getCurrentUserID() != null) {
             db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
         }
     }
@@ -258,8 +248,9 @@ public class Tasks extends AppCompatActivity
     }
 
     public void startTaskTimer(final View v, final Task task) {
-        if(!oneTaskActive) {
-            oneTaskActive = true;
+        if(!thereIsActiveTask) {
+            thereIsActiveTask = true;
+            activeTask = task;
             T = new Timer();
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
@@ -295,7 +286,7 @@ public class Tasks extends AppCompatActivity
     }
 
     public void stopTaskTimer(final View v, final Task task) {
-        if(oneTaskActive) {
+        if(thereIsActiveTask) {
             T.cancel();
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
@@ -322,7 +313,8 @@ public class Tasks extends AppCompatActivity
                     updateTaskInDb(task);
                 }
             });
-            oneTaskActive = false;
+            thereIsActiveTask = false;
+            activeTask = null;
         }
     }
 
@@ -331,7 +323,16 @@ public class Tasks extends AppCompatActivity
     }
 
     public void setOneTaskActive(boolean status){
-        oneTaskActive = status;
+        thereIsActiveTask = status;
+
+        //Setting the state of the task to paused when logging out of app
+        if(status == false){
+            activeTask.setState("paused");
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            //Get userID of currently logged in User
+            String userID = getCurrentUserID();
+            db.collection("user").document(userID).collection("tasks").document(activeTask.getDocumentID()).set(activeTask);
+        }
     }
 
     public void enableDisableAllButtons(boolean status){
@@ -358,7 +359,7 @@ public class Tasks extends AppCompatActivity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String docID = t.getDocumentID();
-        Log.d(TAG,"Updating called, task id is: " + docID);
+        //Log.d(TAG,"Updating called, task id is: " + docID);
         if (getCurrentUserID() != null) {
 
             db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).set(t)

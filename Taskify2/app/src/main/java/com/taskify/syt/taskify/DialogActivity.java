@@ -45,6 +45,9 @@ public class DialogActivity extends DialogFragment {
         DialogActivity da = new DialogActivity();
         return da;
     }
+    /**
+     * Removed dublicate method
+     * Method is in Tasks.java
     public void populateData(Task t) throws ParseException {
         //tDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -52,6 +55,7 @@ public class DialogActivity extends DialogFragment {
             db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
         }
     }
+     */
 
     public String getCurrentUserID(){
         //Get userID of current user
@@ -89,7 +93,17 @@ public class DialogActivity extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             Task task = new Task(taskTitle.getText().toString(), getCurrentDate(), getCurrentUserID(), spinner.getSelectedItem().toString(), "unactive");
-                            populateData(task);
+                            //This stops an active task
+                            //EmailPasswordActivity.getInstance().prepareTasksForExit();
+                            //populateData(task);
+                            EmailPasswordActivity.getInstance().prepareTasksForExit();
+                            Tasks.getInstance().populateData(task);
+                            /**
+                            Tasks.getInstance().finish();
+                            Intent newIntent = new Intent(this, Tasks.class);
+                            startActivity(newIntent);
+                             */
+
                         } catch(Exception e) {
                             Log.d("dialog",e.getMessage());
                         }
