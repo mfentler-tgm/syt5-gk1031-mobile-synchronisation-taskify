@@ -205,12 +205,21 @@ public class Tasks extends AppCompatActivity
                     items.clear();
                     List<DocumentSnapshot> listOfDocuments = queryDocumentSnapshots.getDocuments();
                     for (DocumentSnapshot doc : listOfDocuments) {
-                        doc.toObject(Task.class).setDocumentID(doc.getId());
 
-                        if(doc.toObject(Task.class).getState().equals("active")) {
-                            items.add(0,doc.toObject(Task.class));
+                        Task t = doc.toObject(Task.class);
+                        //Setting docID field in db if not already set
+                        if(t.getDocumentID() == null){
+                            Log.d(TAG,"Task Object has no docID yet ...");
+                            t.setDocumentID(doc.getId());
+                            updateTaskInDb(t);
+                        }
+                        Log.d(TAG,"Task Object should have docID now "+t.getDocumentID());
+                        //doc.toObject(Task.class).setDocumentID(doc.getId());
+                        //Log.d(TAG,"Setting id to: "+doc.getId());
+                        if(t.getState().equals("active")) {
+                            items.add(0,t);
                         } else {
-                            items.add(doc.toObject(Task.class));
+                            items.add(t);
                         }
 
                         //items.add(doc.toObject(Task.class).getDescription());
@@ -236,6 +245,7 @@ public class Tasks extends AppCompatActivity
 
 
         if (getCurrentUserID() != null) {
+            t.setUser_id(getCurrentUserID());
             //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
             db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
         }
@@ -344,16 +354,27 @@ public class Tasks extends AppCompatActivity
     }
 
     private void updateTaskInDb(Task t){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        //Date date = new Date();
-        //String newdateString = dateFormat.format(date);
-        //Date newdate = dateFormat.parse(newdateString);
-        String docID = t.getDocumentID();
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String docID = t.getDocumentID();
+        Log.d(TAG,"Updating called, task id is: " + docID);
         if (getCurrentUserID() != null) {
-            //Task t = new Task("Task 1: "+mAuth.getCurrentUser().getEmail(), newdate, userID);
-            //db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).update(t);
+
+            db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).set(t)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error writing document", e);
+                        }
+                    });
+
         }
     }
 }
