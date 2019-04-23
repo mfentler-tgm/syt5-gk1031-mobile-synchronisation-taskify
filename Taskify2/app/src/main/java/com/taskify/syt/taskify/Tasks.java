@@ -263,7 +263,6 @@ public class Tasks extends AppCompatActivity
                         @Override
                         public void run() {
                             int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
-                            Log.d(TAG, String.valueOf(count));
                             count++;
                             ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
 
@@ -290,7 +289,6 @@ public class Tasks extends AppCompatActivity
             T.cancel();
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
-            Log.d(TAG, parentView.toString());
 
             enableDisableAllButtons(false);
 

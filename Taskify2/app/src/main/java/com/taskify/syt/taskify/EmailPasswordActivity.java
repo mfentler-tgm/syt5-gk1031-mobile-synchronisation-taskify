@@ -100,9 +100,14 @@ public class EmailPasswordActivity extends MainActivity implements
     }
 
     public void signOut(Context c) {
-        prepareTasksForExit();
-        mAuth.signOut();
-        updateUI(null,c);
+        try {
+            prepareTasksForExit();
+        }catch(Exception e){
+            Log.d("kurwaa",e.getMessage());
+        }finally {
+            mAuth.signOut();
+            updateUI(null, c);
+        }
     }
 
     public void prepareTasksForExit(){
