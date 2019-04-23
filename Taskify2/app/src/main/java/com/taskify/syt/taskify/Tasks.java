@@ -352,7 +352,7 @@ public class Tasks extends AppCompatActivity
         thereIsActiveTask = status;
 
         //Setting the state of the task to paused when logging out of app
-        if(status == false){
+        if(status == false && activeTask!=null){
             activeTask.setState("paused");
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             //Get userID of currently logged in User

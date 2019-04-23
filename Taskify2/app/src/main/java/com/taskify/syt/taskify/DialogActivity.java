@@ -97,10 +97,13 @@ public class DialogActivity extends DialogFragment {
                             //EmailPasswordActivity.getInstance().prepareTasksForExit();
                             //populateData(task);
 
+                            EmailPasswordActivity.getInstance().prepareTasksForExit();
                             Tasks.getInstance().populateData(task);
-                            Intent newIntent = new Intent(null, Tasks.class);
-                            startActivity(newIntent);
-                            Tasks.getInstance().finish();
+                            Tasks.getInstance().bindArrayAdapter();
+                            Tasks.getInstance().setListeners();
+                            //Intent newIntent = new Intent(null, Tasks.class);
+                            //startActivity(newIntent);
+                            //Tasks.getInstance().finish();
                             //EmailPasswordActivity.getInstance().prepareTasksForExit();
                             //Tasks.getInstance().populateData(task);
                             /**
