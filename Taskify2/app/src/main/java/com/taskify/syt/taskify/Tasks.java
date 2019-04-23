@@ -321,9 +321,6 @@ public class Tasks extends AppCompatActivity
             T.cancel();
             LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
             final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
-            Log.d(TAG, parentView.toString());
-
-
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -334,13 +331,14 @@ public class Tasks extends AppCompatActivity
                     ((TextView) v.findViewById(R.id.taskStatus)).setText("finished");
                     ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 0, 0));
 
-
                     task.setTaskDuration(count);
                     task.setState("finished");
                     updateTaskInDb(task);
                 }
             });
             enableDisableAllButtons(false);
+            bindArrayAdapter();
+            setListeners();
             thereIsActiveTask = false;
             activeTask = null;
         }
@@ -366,20 +364,20 @@ public class Tasks extends AppCompatActivity
     public void enableDisableAllButtons(boolean status) {
         for (int i = 0; i < listView.getChildCount(); i++) {
             Log.d(TAG,((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString());
-            if (((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString().equals("finished")) {
+            //if (((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString().equals("finished")) {
 
-                listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
-                listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
-                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+                //listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
+                //listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
+                //listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
 
-            }else{
+            //}else{
                 if (status == true) {
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
                     listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
                 }else {
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
                 }
-            }
+            //}
         }
     }
 
@@ -396,20 +394,50 @@ public class Tasks extends AppCompatActivity
         String docID = t.getDocumentID();
         //Log.d(TAG,"Updating called, task id is: " + docID);
         if (getCurrentUserID() != null) {
-
-            db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).set(t)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully written!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error writing document", e);
-                        }
-                    });
+            if(t.getState().toString().equals("finished")){
+                //First add the finished task to other collection
+                db.collection("user").document(getCurrentUserID()).collection("finishedTasks").document(docID).set(t)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Document successfully added to finishedTasks!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error while adding document to finished tasks", e);
+                            }
+                        });
+                //Then remove task from active tasks
+                db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Document successfully deleted!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error while deleting document", e);
+                            }
+                        });
+            }else {
+                db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).set(t)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Document successfully updated!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error while updating document", e);
+                            }
+                        });
+            }
 
         }
     }
