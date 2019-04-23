@@ -96,8 +96,13 @@ public class DialogActivity extends DialogFragment {
                             //This stops an active task
                             //EmailPasswordActivity.getInstance().prepareTasksForExit();
                             //populateData(task);
-                            EmailPasswordActivity.getInstance().prepareTasksForExit();
+
                             Tasks.getInstance().populateData(task);
+                            Intent newIntent = new Intent(null, Tasks.class);
+                            startActivity(newIntent);
+                            Tasks.getInstance().finish();
+                            //EmailPasswordActivity.getInstance().prepareTasksForExit();
+                            //Tasks.getInstance().populateData(task);
                             /**
                             Tasks.getInstance().finish();
                             Intent newIntent = new Intent(this, Tasks.class);

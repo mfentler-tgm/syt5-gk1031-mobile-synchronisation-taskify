@@ -215,11 +215,11 @@ public class Tasks extends AppCompatActivity
                             updateTaskInDb(t);
                         }
                         //Log.d(TAG,"Task Object should have docID now "+t.getDocumentID());
-                        if(t.getState().equals("active")) {
-                            items.add(0,t);
-                        } else {
+                        //if(t.getState().equals("active")) {
+                            //items.add(0,t);
+                        //} else {
                             items.add(t);
-                        }
+                        //}
 
                         //items.add(doc.toObject(Task.class).getDescription());
                     }
@@ -318,6 +318,36 @@ public class Tasks extends AppCompatActivity
         }
     }
 
+    public void finishTaskTimer(final View v, final Task task) {
+        if(thereIsActiveTask) {
+            T.cancel();
+            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+            Log.d(TAG, parentView.toString());
+
+
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+
+                    //Set Background Color of active Task
+                    ((TextView) v.findViewById(R.id.taskStatus)).setText("finished");
+                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 0, 0));
+
+
+                    task.setTaskDuration(count);
+                    task.setState("finished");
+                    updateTaskInDb(task);
+                }
+            });
+            enableDisableAllButtons(false);
+            thereIsActiveTask = false;
+            activeTask = null;
+        }
+    }
+
     public static Tasks getInstance() {
         return instance;
     }
@@ -335,15 +365,22 @@ public class Tasks extends AppCompatActivity
         }
     }
 
-    public void enableDisableAllButtons(boolean status){
-        if(status == true){
-            for(int i=0; i<listView.getChildCount();i++) {
+    public void enableDisableAllButtons(boolean status) {
+        for (int i = 0; i < listView.getChildCount(); i++) {
+            Log.d(TAG,((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString());
+            if (((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString().equals("finished")) {
+
                 listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
                 listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
-            }
-        }else{
-            for(int i=0; i<listView.getChildCount();i++) {
-                listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
+                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+
+            }else{
+                if (status == true) {
+                    listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
+                    listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
+                }else {
+                    listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
+                }
             }
         }
     }

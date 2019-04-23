@@ -58,6 +58,13 @@ public class CustomTaskAdapter extends ArrayAdapter<Task> {
                 Tasks.getInstance().stopTaskTimer((LinearLayout)v.getParent().getParent().getParent(), currentTask);
             }
         });
+        Button finishButton = listItem.findViewById(R.id.finishButton);
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tasks.getInstance().finishTaskTimer((LinearLayout)v.getParent().getParent().getParent(), currentTask);
+            }
+        });
 
         return listItem;
     }
