@@ -95,10 +95,77 @@ Um gespeicherte Tasks genau einem Benutzer zuweisen zu können wurde ein Schema 
 Wird beim Speichern eines Tasks kein Name angegeben, dann wird von Firebase ein zufälliger Erstellt, wie man im Bild oben erkennen kann.
 
 ### __Tasks aus der Datenbank auslesen__
-Um Tasks aus der Datenbank auszulesen wird die Methode 'get()' verwendet. Die ausgelesenen Tasks werden daraufhin in einem ArrayAdapter gespeichert, dessen Elemente dann wiederum in der GUI angezeigt werden können. Diesem ArrayAdapter kann ein ...Eventhandler zugewiesen werden, der erkennt sobald sich die Daten in der Datenbank geändert haben. Tritt dieser Fall ein, so werden die Elemente des ArrayAdapters aktualisiert und die neue Liste angezeigt.
+So werden Tasks aus der DB ausgelesen: 
+```java
+db.collection("user").document(userID).collection("tasks").addSnapshotListener(new EventListener<QuerySnapshot>() {
+    @Override
+    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException exception) {
+        if (exception != null) {
+            Log.w(TAG, "Listen failed.", exception);
+            return;
+        }
+        if (queryDocumentSnapshots != null) {
+            //Clear the list
+            items.clear();
+            //Get all documents
+            List<DocumentSnapshot> listOfDocuments = queryDocumentSnapshots.getDocuments();
+            for (DocumentSnapshot doc : listOfDocuments) {
+                //Create Task Object out of data
+                Task t = doc.toObject(Task.class);
+                //Setting docID field in db if not already set
+                if(t.getDocumentID() == null){
+                    t.setDocumentID(doc.getId());
+                    updateTaskInDb(t);
+                }
+                items.add(t);
+            }
+            itemsadapter.notifyDataSetChanged();
+        } else {
+            Log.d(TAG, "Current data: null");
+        }
+    }
+});
+```
+Die ausgelesenen Tasks werden daraufhin in einer Liste gespeichert, deren Elemente dann über den CustomTaskAdapter in der GUI angezeigt werden. 
+```java
+final ArrayList<Task> items = new ArrayList<Task>();
+final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this, items);
+```
+Diesem ArrayAdapter wird beim Holen der Daten gemeldet, dass sich etwas geändert hat. Daraufhin aktualisiert er die GUI.
+```java
+itemsadapter.notifyDataSetChanged();
+```
+Die Verknüpfung des Adapters mit dem Element der GUI erfolgt in diesem Schritt:
+```java
+listView = findViewById(R.id.listviewtasks);
+listView.setAdapter(itemsadapter);
+```
+
+Wenn Daten aus der Datenbank ausgelesen werden, wird dem TaskObjekt der Name des Dokuments als Variable zugewiesen, welche dann wiederrum im späteren Verlauf in der Datenbank als Feld des Dokuments gespeichert wird. Das ist notwendig um später von einem spezifischen Task auf dessen Dokumentennamen zu kommen. (wichtig beim Updaten)
+```java
+//Setting docID field in db if not already set
+if(t.getDocumentID() == null){
+    t.setDocumentID(doc.getId());
+    updateTaskInDb(t);
+}
+```
 
 ### __Neue Tasks erstellen__
 Beim Erstellen neuer Tasks muss ein Task Objekt erstellt werden, welches dann wiederrum der Firebase Methode 'add()' als Parameter mitgegeben wird.
+```java
+FirebaseFirestore db = FirebaseFirestore.getInstance();
+if(getCurrentUserID() != null) {
+    db.collection("user").document(getCurrentUserID()).collection("tasks").add(t);
+}
+```
+Mit der 'getCurrentUser()' Methode wird überprüft ob der Benutzer angemeldet ist.
+```java
+public String getCurrentUserID() {
+    //Get userID of current user
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    return mAuth.getUid();
+}
+```
 
 ### __Daten in der DB updaten__
 Immer wenn Tasks gestartet, gestoppt, beendet werden oder wenn sich die Taskdauer ändert, wird der bestimmte Datensatz im Firestore upgedated.  

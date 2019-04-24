@@ -185,11 +185,12 @@ public class Tasks extends AppCompatActivity
     }
 
     public void bindArrayAdapter() {
-        listView = findViewById(R.id.listviewtasks);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         final ArrayList<Task> items = new ArrayList<Task>();
-        //final ArrayAdapter<String> itemsadapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1,items);
         final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this, items);
+
+        listView = findViewById(R.id.listviewtasks);
         listView.setAdapter(itemsadapter);
 
         //Get userID of currently logged in User
@@ -210,20 +211,11 @@ public class Tasks extends AppCompatActivity
                         Task t = doc.toObject(Task.class);
                         //Setting docID field in db if not already set
                         if(t.getDocumentID() == null){
-                            //Log.d(TAG,"Task Object has no docID yet ...");
                             t.setDocumentID(doc.getId());
                             updateTaskInDb(t);
                         }
-                        //Log.d(TAG,"Task Object should have docID now "+t.getDocumentID());
-                        //if(t.getState().equals("active")) {
-                            //items.add(0,t);
-                        //} else {
-                            items.add(t);
-                        //}
-
-                        //items.add(doc.toObject(Task.class).getDescription());
+                        items.add(t);
                     }
-
                     itemsadapter.notifyDataSetChanged();
                 } else {
                     Log.d(TAG, "Current data: null");
