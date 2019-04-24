@@ -3,6 +3,13 @@
 ## Aufgabenstellung
 Die detaillierte [Aufgabenstellung](TASK.md) beschreibt die notwendigen Schritte zur Realisierung.
 
+## Endergebnis - Taskliste
+Die fertige Taskliste enthält alle noch nicht beendeten Tasks des Benutzers. Er hat die Möglichkeit einen beliebigen Task zu starten. Sobald ein Task gestartet ist, läuft der Timer. Wie man erkennen kann, kann immer nur ein Task gleichzeitig gestartet werden. (Bild 1)  
+Wenn der Task pausiert wurde, wird das visuell hervorgehoben und alle Tasks sind wieder startbereit. (Bild 2)  
+Wenn der Task beendet wird, wird er aus der Taskliste entfernt. (Bild3)  
+![taskStarted](documentationImages/taskStarted.jpg)
+![taskPaused](documentationImages/taskPaused.jpg)
+![taskFinished](documentationImages/taskFinished.jpg)
 ## Implementierung
 
 Für die Synchronisation und Persistierung der Tasks wurde  Firebase verwendet. Die Funktionen, die davon für das Projekt verwendet wurden sind "Authentication" für Login/Register und "Firestore" als Datenbank. Firebase kümmert sich dabei selbst darum, dass wenn neue Daten in der Datenbank sind, die App das mitbekommt. Was dann genau mit den neuen Daten gemacht werden soll, muss durch den Programmierer bestimmt werden. (Mehr dazu später)  
