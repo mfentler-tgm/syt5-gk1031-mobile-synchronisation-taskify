@@ -11,6 +11,9 @@ In der [Firebase Dokumentation](https://firebase.google.com/docs/android/setup) 
 
 Alternativ könnte das Speichern und die Synchronisation auch selbst programmiert werden. Da Firebase aber wie perfekt für den Anwendungszweck gemacht ist, wird im weiteren nicht weiter darauf eingegangen und nur die Umsetzung mit Firebase erklärt.
 
+### __Was ist Firebase?__
+OSMAN BITTE ERGÄNZE DAS HIER
+
 ### __Aufbau der App__
 Die Programmierung der App erfolgt in Java. Das Frontend kann mit XML-Files bestimmt werden.  
 Sobald der Benutzer die App startet wird überprüft ob er angemeldet ist. Falls das nicht der Fall ist, wird die Login-View gestartet, in der der Benutzer seine vorhanden Anmeldedaten (Email, Passwort) eingeben muss. -> Da ein Registrieren in der App nicht Teil der Anforderungen war, wurde es weggelassen. Registriert werden kann ein Benutzer manuell über die Firebase-Console (Alle Firebase Einstellungen dort zu finden.)  

@@ -372,9 +372,10 @@ public class Tasks extends AppCompatActivity
                 if (status == true) {
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
                     listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
+                    listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
                 }else if(status==false){
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
-                    listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+                    listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(true);
                 }
             //}
         }
