@@ -95,8 +95,10 @@ Um gespeicherte Tasks genau einem Benutzer zuweisen zu können wurde ein Schema 
 Wird beim Speichern eines Tasks kein Name angegeben, dann wird von Firebase ein zufälliger Erstellt, wie man im Bild oben erkennen kann.
 
 ### __Tasks aus der Datenbank auslesen__
+Um Tasks aus der Datenbank auszulesen wird die Methode 'get()' verwendet. Die ausgelesenen Tasks werden daraufhin in einem ArrayAdapter gespeichert, dessen Elemente dann wiederum in der GUI angezeigt werden können. Diesem ArrayAdapter kann ein ...Eventhandler zugewiesen werden, der erkennt sobald sich die Daten in der Datenbank geändert haben. Tritt dieser Fall ein, so werden die Elemente des ArrayAdapters aktualisiert und die neue Liste angezeigt.
 
 ### __Neue Tasks erstellen__
+Beim Erstellen neuer Tasks muss ein Task Objekt erstellt werden, welches dann wiederrum der Firebase Methode 'add()' als Parameter mitgegeben wird.
 
 ### __Daten in der DB updaten__
 Immer wenn Tasks gestartet, gestoppt, beendet werden oder wenn sich die Taskdauer ändert, wird der bestimmte Datensatz im Firestore upgedated.  
