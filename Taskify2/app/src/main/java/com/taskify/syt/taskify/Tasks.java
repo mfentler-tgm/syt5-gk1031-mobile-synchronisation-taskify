@@ -252,10 +252,14 @@ public class Tasks extends AppCompatActivity
             thereIsActiveTask = true;
             activeTask = task;
             T = new Timer();
-            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
-            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
-            Log.d(TAG, parentView.toString());
+
+            //Layoutreferenz zum Task
+            //LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            //final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+
+            //Andere Buttons disablen
             enableDisableAllButtons(true);
+
             T.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -287,8 +291,8 @@ public class Tasks extends AppCompatActivity
     public void stopTaskTimer(final View v, final Task task) {
         if(thereIsActiveTask) {
             T.cancel();
-            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
-            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+            //LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+            //final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
 
             enableDisableAllButtons(false);
 
@@ -319,29 +323,30 @@ public class Tasks extends AppCompatActivity
     public void finishTaskTimer(final View v, final Task task) {
         if(thereIsActiveTask) {
             T.cancel();
-            LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
-            final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
-
-                    //Set Background Color of active Task
-                    ((TextView) v.findViewById(R.id.taskStatus)).setText("finished");
-                    ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 0, 0));
-
-                    task.setTaskDuration(count);
-                    task.setState("finished");
-                    updateTaskInDb(task);
-                }
-            });
-            enableDisableAllButtons(false);
-            bindArrayAdapter();
-            setListeners();
-            thereIsActiveTask = false;
-            activeTask = null;
         }
+        //LayoutInflater layoutInflater = LayoutInflater.from(Tasks.this);
+        //final View parentView = layoutInflater.inflate(R.layout.custom_taskview, null);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+
+                //Set Background Color of active Task
+                ((TextView) v.findViewById(R.id.taskStatus)).setText("finished");
+                ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(255, 0, 0));
+
+                task.setTaskDuration(count);
+                task.setState("finished");
+                updateTaskInDb(task);
+            }
+        });
+        
+        thereIsActiveTask = false;
+        activeTask = null;
+        enableDisableAllButtons(false);
+        bindArrayAdapter();
+        setListeners();
     }
 
     public static Tasks getInstance() {
@@ -374,7 +379,7 @@ public class Tasks extends AppCompatActivity
                 if (status == true) {
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
                     listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
-                }else {
+                }else if(status==false && activeTask==null){
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
                 }
             //}

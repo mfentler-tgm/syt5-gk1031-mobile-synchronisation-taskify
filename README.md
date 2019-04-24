@@ -96,10 +96,42 @@ Wird beim Speichern eines Tasks kein Name angegeben, dann wird von Firebase ein 
 
 ### __Neue Tasks erstellen__
 
+### __Daten in der DB updaten__
+Immer wenn Tasks gestartet, gestoppt, beendet werden oder wenn sich die Taskdauer ändert, wird der bestimmte Datensatz im Firestore upgedated.  
+Um den richtigen Datensatz zu finden wird mit der _documentID_ gearbeitet. Diese ID ist der Name des Datensatzes in der Datenbank, der nebenbei auch im Task Objekt gespeichert wird.  
+Diese Task ID wird beim Updaten zuerst vom Task geholt und anschließend für die _set()_ Methode verwendet.
+```java
+String docID = t.getDocumentID();
+...
+db.collection("user").document(getCurrentUserID()).collection("tasks").document(docID).set(t)
+...
+```
+
 ### __Task starten__
+Beim Starten eines Tasks wird zu aller erst überprüft ob es bereits ein andere Task als _aktiv_ gekennzeichnet ist. Es ist allerdings auch nicht möglich einen anderen Task zu starten, da beim Starten alle anderen 'Start'-Buttons disabled werden. Nach der Überprüfung wird der Timer gestartet und zum aktuellen Duration-Wert pro Sekunde '1' dazugezählt.
+
+```java
+
+```
 
 ### __Taks stoppen__
+Beim Stoppen eines Tasks wird der aktive Timer gestoppt, der Status des Tasks geändert und anschließend die Dauer und der Status in der Datenbank gespeichert.  
+Um den Timer zu stoppen wird die Methode _T.cancel();_ verwendet.  
 
 ### __Task beenden__
+Beim Beenden eines Tasks, wird der Task aus der "task" Collection in der Datenbank in die Collection "finishedTasks" verschoben. Das hat zur Folge, dass der Task nicht mehr auf der Seite der aktiven Tasks angezeigt wird.
+
+Um in der Datenbank Daten zu löschen kann die Funktion 'delete()' verwendet werden. Wenn ein Task gelöscht werden soll, wird dessen Status auf _finished_ gesetzt und anschließend die _updateTaskInDb()_ Methode aufgerufen. In dieser wird der Task anschließend so behandelt, wie oben beschrieben
+```java
+if(t.getState().toString().equals("finished")){
+    //First add the finished task to other collection
+    db.collection("user").document(getCurrentUserID()).collection("finishedTasks")  
+    .document(docID).set(t)
+    //Then remove task from active tasks
+    db.collection("user").document(getCurrentUserID()).collection("tasks")  
+    .document(docID).delete()
+}
+```
+
 
 ## Quellen
