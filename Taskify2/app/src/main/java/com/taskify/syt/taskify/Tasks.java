@@ -273,6 +273,7 @@ public class Tasks extends AppCompatActivity
                             //Enable Finish Button Disable Start Button
                             (v.findViewById(R.id.startButton)).setEnabled(false);
                             (v.findViewById(R.id.stopButton)).setEnabled(true);
+                            (v.findViewById(R.id.finishButton)).setEnabled(true);
 
                             //Set Background Color of active Task
                             ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
@@ -341,7 +342,7 @@ public class Tasks extends AppCompatActivity
                 updateTaskInDb(task);
             }
         });
-        
+
         thereIsActiveTask = false;
         activeTask = null;
         enableDisableAllButtons(false);
@@ -379,8 +380,9 @@ public class Tasks extends AppCompatActivity
                 if (status == true) {
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
                     listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
-                }else if(status==false && activeTask==null){
+                }else if(status==false){
                     listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
+                    listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
                 }
             //}
         }
