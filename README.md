@@ -190,9 +190,36 @@ db.collection("user").document(getCurrentUserID()).collection("tasks").document(
 
 ### __Task starten__
 Beim Starten eines Tasks wird zu aller erst überprüft ob es bereits ein andere Task als _aktiv_ gekennzeichnet ist. Es ist allerdings auch nicht möglich einen anderen Task zu starten, da beim Starten alle anderen 'Start'-Buttons disabled werden. Nach der Überprüfung wird der Timer gestartet und zum aktuellen Duration-Wert pro Sekunde '1' dazugezählt.
-
 ```java
+T = new Timer();
+...
+T.scheduleAtFixedRate(new TimerTask() {
+    @Override
+    public void run() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Increase taskduration counter
+                int count = Integer.parseInt(((TextView) v.findViewById(R.id.taskDuration)).getText().toString());
+                count++;
+                ((TextView) v.findViewById(R.id.taskDuration)).setText(String.valueOf(count));
 
+                //Enable Finish Button Disable Start Button
+                (v.findViewById(R.id.startButton)).setEnabled(false);
+                (v.findViewById(R.id.stopButton)).setEnabled(true);
+                (v.findViewById(R.id.finishButton)).setEnabled(true);
+
+                //Set Background Color of active Task
+                ((TextView) v.findViewById(R.id.taskStatus)).setText("active");
+                ((TextView) v.findViewById(R.id.taskStatus)).setBackgroundColor(Color.rgb(155, 244, 66));
+
+                task.setTaskDuration(count);
+                task.setState("active");
+                updateTaskInDb(task);
+            }
+        });
+    }
+}, 1000, 1000);
 ```
 
 Um die Funktionalität der App zu sichern ist der Stop und der Finish Button erst dann für den Benutzer verfügbar, wenn der Task gestartet ist. Sobald ein Task gestartet ist, werden die Buttons aller anderer Tasks disabled.
