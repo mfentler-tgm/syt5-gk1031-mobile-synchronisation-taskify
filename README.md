@@ -19,7 +19,10 @@ In der [Firebase Dokumentation](https://firebase.google.com/docs/android/setup) 
 Alternativ könnte das Speichern und die Synchronisation auch selbst programmiert werden. Da Firebase aber wie perfekt für den Anwendungszweck gemacht ist, wird im weiteren nicht weiter darauf eingegangen und nur die Umsetzung mit Firebase erklärt.
 
 ### __Was ist Firebase?__
-OSMAN BITTE ERGÄNZE DAS HIER
+
+Firebase ist eine Plattform für die Entwicklung von Mobil- und Webanwendungen, die 2011 von Firebase, Inc. entwickelt und 2014 von Google übernommen wurde. Seit Oktober 2018 umfasst die Firebase-Plattform 18 Produkte , die von 1,5 Millionen Apps verwendet werden.
+
+Unter diesen Produkten gibt es beispielweise **Firebase Auth**, welches eine einfach bedienbare Authentifikationsmöglichkeit über Firebase bietet oder **Realtime database**, das ein Service mit einer NoSQL-Datenbank ist und dem Entwickler eine API für Synchronisierung über Clients und Datenspeicherung in der Cloud bietet.
 
 ### __Aufbau der App__
 Die Programmierung der App erfolgt in Java. Das Frontend kann mit XML-Files bestimmt werden.  
@@ -53,7 +56,7 @@ Für die Authentifizierung wurde __Firebase-Authentication__ verwendet. Um diese
 // Initialize Firebase Auth
 mAuth = FirebaseAuth.getInstance();
 ```
-__Beim Starten__ der App wird überprüft ob der Benutzer bereits bei Firebase angemeldet ist. Falls nicht, liefert die Methode _getCurrentUser()_ _null_ zurück. 
+__Beim Starten__ der App wird überprüft ob der Benutzer bereits bei Firebase angemeldet ist. Falls nicht, liefert die Methode _getCurrentUser()_ _null_ zurück.
 ```java
 @Override
 public void onStart() {
@@ -97,7 +100,7 @@ Neue Benutzer können in der Firebase Console, im Authentication Register, hinzu
 
 ### __Datenbank - "Firestore"__
 Firebase stellt für die Persisitierung von Daten zwei verschiedene Datenbanksysteme zur Verfügung. In diesem Projekt wurde "Firestore" gewählt, da das das neuere System von beiden ist und mehr Funktionen enthält.  
-Im Firestore werden Daten in Form von Collections und Documents gespeichert. Collections können Dokumente enthalten und die wiederrum weitere Collections. 
+Im Firestore werden Daten in Form von Collections und Documents gespeichert. Collections können Dokumente enthalten und die wiederrum weitere Collections.
 
 Um gespeicherte Tasks genau einem Benutzer zuweisen zu können wurde ein Schema gewählt, in dem die unique BenutzerID als Name des Documents dient. In diesem Dokument ist dann eine task-Collection, die alle Tasks des Benutzers in Form eines Dokuments mit den Feldern "createdOn", "description", "state", "taskTag" und "user_id" speichert.
 ![documentationImages/savedTasks.JPG](documentationImages/savedTasks.JPG)
@@ -105,7 +108,7 @@ Um gespeicherte Tasks genau einem Benutzer zuweisen zu können wurde ein Schema 
 Wird beim Speichern eines Tasks kein Name angegeben, dann wird von Firebase ein zufälliger Erstellt, wie man im Bild oben erkennen kann.
 
 ### __Tasks aus der Datenbank auslesen__
-So werden Tasks aus der DB ausgelesen: 
+So werden Tasks aus der DB ausgelesen:
 ```java
 db.collection("user").document(userID).collection("tasks").addSnapshotListener(new EventListener<QuerySnapshot>() {
     @Override
@@ -136,7 +139,7 @@ db.collection("user").document(userID).collection("tasks").addSnapshotListener(n
     }
 });
 ```
-Die ausgelesenen Tasks werden daraufhin in einer Liste gespeichert, deren Elemente dann über den CustomTaskAdapter in der GUI angezeigt werden. 
+Die ausgelesenen Tasks werden daraufhin in einer Liste gespeichert, deren Elemente dann über den CustomTaskAdapter in der GUI angezeigt werden.
 ```java
 final ArrayList<Task> items = new ArrayList<Task>();
 final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this, items);
