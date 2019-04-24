@@ -22,7 +22,7 @@ Alternativ könnte das Speichern und die Synchronisation auch selbst programmier
 
 Firebase ist eine Plattform für die Entwicklung von Mobil- und Webanwendungen, die 2011 von Firebase, Inc. entwickelt und 2014 von Google übernommen wurde. Seit Oktober 2018 umfasst die Firebase-Plattform 18 Produkte , die von 1,5 Millionen Apps verwendet werden.
 
-Unter diesen Produkten gibt es beispielweise **Firebase Auth**, welches eine einfach bedienbare Authentifikationsmöglichkeit über Firebase bietet oder **Realtime database**, das ein Service mit einer NoSQL-Datenbank ist und dem Entwickler eine API für Synchronisierung über Clients und Datenspeicherung in der Cloud bietet.
+Unter diesen Produkten gibt es beispielweise **Firebase Auth**, welches eine einfach bedienbare Authentifikationsmöglichkeit über Firebase bietet oder **Firestore**, das ein Service mit einer NoSQL-Datenbank ist und dem Entwickler eine API für Synchronisierung über Clients und Datenspeicherung in der Cloud bietet.
 
 ### __Aufbau der App__
 Die Programmierung der App erfolgt in Java. Das Frontend kann mit XML-Files bestimmt werden.  
