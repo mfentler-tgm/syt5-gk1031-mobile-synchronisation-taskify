@@ -33,13 +33,13 @@ Es ist freigestellt, welche mobile Implementierungsumgebung dafür gewählt wird
 ## Bewertung
 Gruppengrösse: 2 Personen
 ### Grundanforderungen **überwiegend erfüllt**
-- [ ] Beschreibung des Synchronisationsansatzes und Design der gewählten Architektur (Interaktion, Datenhaltung)
-- [ ] Recherche möglicher Systeme bzw. Frameworks zur Synchronisation und Replikation der Daten
-- [ ] Dokumentation der gewählten Schnittstellen
+- [X] Beschreibung des Synchronisationsansatzes und Design der gewählten Architektur (Interaktion, Datenhaltung)
+- [X] Recherche möglicher Systeme bzw. Frameworks zur Synchronisation und Replikation der Daten
+- [X] Dokumentation der gewählten Schnittstellen
 ### Grundanforderungen **zur Gänze erfüllt**
-- [ ] Implementierung der gewählten Umgebung auf lokalem System
+- [X] Implementierung der gewählten Umgebung auf lokalem System
 - [ ] Überprüfung der funktionalen Anforderungen zur Erstellung und Synchronisation der Datensätze
-- [ ] funktionale Implementierung
+- [X] funktionale Implementierung
 ### Erweiterte Anforderungen **überwiegend erfüllt**
 - [ ] Implementierung eines Replikationsansatzes zur Konsistenzwahrung
 ### Erweiterte Anforderungen **zur Gänze erfüllt**

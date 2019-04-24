@@ -9,6 +9,8 @@ Für die Synchronisation und Persistierung der Tasks wurde  Firebase verwendet. 
 
 In der [Firebase Dokumentation](https://firebase.google.com/docs/android/setup) sind alle Komponenten beschrieben und wie man diese in ein Android Studio Projekt einfügen kann, beziehungsweise welche verschiedenen Methoden für verschiedenste Anforderungen vorhanden sind.
 
+Alternativ könnte das Speichern und die Synchronisation auch selbst programmiert werden. Da Firebase aber wie perfekt für den Anwendungszweck gemacht ist, wird im weiteren nicht weiter darauf eingegangen und nur die Umsetzung mit Firebase erklärt.
+
 ### __Aufbau der App__
 Die Programmierung der App erfolgt in Java. Das Frontend kann mit XML-Files bestimmt werden.  
 Sobald der Benutzer die App startet wird überprüft ob er angemeldet ist. Falls das nicht der Fall ist, wird die Login-View gestartet, in der der Benutzer seine vorhanden Anmeldedaten (Email, Passwort) eingeben muss. -> Da ein Registrieren in der App nicht Teil der Anforderungen war, wurde es weggelassen. Registriert werden kann ein Benutzer manuell über die Firebase-Console (Alle Firebase Einstellungen dort zu finden.)  
@@ -17,7 +19,7 @@ In der App werden dem Benutzer alle seine individuellen Tasks angezeigt. Diese k
 Sobald sie beendet sind findet der Benutzer sie in einem anderen Fenster mit der dazugehörigen Bearbeitungsdauer.
 
 #### Wichtige Android-Methoden
-Es gibt die Möglichkeit Code beim Erstellen und beim Öffnen der App ausführen zu lassen. Dieser muss dafür in der Methode __onCreate()__ oder in der __onStart()__ Methode sein.
+Es gibt die Möglichkeit Code beim Erstellen und beim Öffnen der App ausführen zu lassen. Dieser muss dafür in der Methode __onCreate()__ oder in der __onStart()__ Methode geschrieben werden.
 
 ### __Firebase-Komponenten verwenden__
 Damit die Firebase-Komponenten in der App verwendet werden können müssen im _app/build.gradle_ File folgende dependencies eingefügt werden:  
@@ -114,6 +116,8 @@ Beim Starten eines Tasks wird zu aller erst überprüft ob es bereits ein andere
 
 ```
 
+Um die Funktionalität der App zu sichern ist der Stop und der Finish Button erst dann für den Benutzer verfügbar, wenn der Task gestartet ist. Sobald ein Task gestartet ist, werden die Buttons aller anderer Tasks disabled.
+
 ### __Taks stoppen__
 Beim Stoppen eines Tasks wird der aktive Timer gestoppt, der Status des Tasks geändert und anschließend die Dauer und der Status in der Datenbank gespeichert.  
 Um den Timer zu stoppen wird die Methode _T.cancel();_ verwendet.  
@@ -133,5 +137,8 @@ if(t.getState().toString().equals("finished")){
 }
 ```
 
+## Replikationsansatz
+Als Replikationssatz könnten die Tasks auch lokal gespeichert werden und immer beim Starten/Stoppen/Beenden eines Tasks die lokalen Daten überschrieben werden. Dies wurde allerdings aus Zeitmangel nicht realisiert.
 
 ## Quellen
+[Firebase Dokumentation](https://firebase.google.com/docs/android/setup)
