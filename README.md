@@ -10,6 +10,10 @@ Wenn der Task beendet wird, wird er aus der Taskliste entfernt. (Bild3)
 ![taskStarted](documentationImages/taskStarted.jpg)
 ![taskPaused](documentationImages/taskPaused.jpg)
 ![taskFinished](documentationImages/taskFinished.jpg)
+
+## Deployment
+Um die App zu Deployen, wird Android Studio benötigt. Darin clickt man auf das 'app' Modul und klickt dann auf den 'Run' Button. Im Fenster, das sich daraufhin öffnet, wählt man das Device aus, auf den das Programm deployed werden soll. Damit das Smartphone erkannt wird, muss es per USB-Kabel mit dem Laptop verbunden werden und Dateitransfer am Smartphone erlaubt werden.
+
 ## Implementierung
 
 Für die Synchronisation und Persistierung der Tasks wurde  Firebase verwendet. Die Funktionen, die davon für das Projekt verwendet wurden sind "Authentication" für Login/Register und "Firestore" als Datenbank. Firebase kümmert sich dabei selbst darum, dass wenn neue Daten in der Datenbank sind, die App das mitbekommt. Was dann genau mit den neuen Daten gemacht werden soll, muss durch den Programmierer bestimmt werden. (Mehr dazu später)  
