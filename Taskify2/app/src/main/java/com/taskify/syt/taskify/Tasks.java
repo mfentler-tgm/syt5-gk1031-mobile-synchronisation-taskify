@@ -362,22 +362,15 @@ public class Tasks extends AppCompatActivity
     public void enableDisableAllButtons(boolean status) {
         for (int i = 0; i < listView.getChildCount(); i++) {
             Log.d(TAG,((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString());
-            //if (((TextView)listView.getChildAt(i).findViewById(R.id.taskStatus)).getText().toString().equals("finished")) {
 
-                //listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
-                //listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
-                //listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
-
-            //}else{
-                if (status == true) {
-                    listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
-                    listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
-                    listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
-                }else if(status==false){
-                    listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
-                    listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(true);
-                }
-            //}
+            if (status == true) {
+                listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.stopButton).setEnabled(false);
+                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(false);
+            }else if(status==false){
+                listView.getChildAt(i).findViewById(R.id.startButton).setEnabled(true);
+                listView.getChildAt(i).findViewById(R.id.finishButton).setEnabled(true);
+            }
         }
     }
 
