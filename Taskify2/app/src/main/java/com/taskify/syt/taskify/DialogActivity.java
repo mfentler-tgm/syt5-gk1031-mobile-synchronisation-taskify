@@ -26,15 +26,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * Created by osman on 15.03.2019.
- */
-
 public class DialogActivity extends DialogFragment {
 
     public EditText taskTitle;
     public Spinner spinner;
-
 
 
     public DialogActivity() {
@@ -75,16 +70,20 @@ public class DialogActivity extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final LayoutInflater inflater = getActivity().getLayoutInflater();
+
         View view = inflater.inflate(R.layout.dialog_activity, null);
         View view2 = inflater.inflate(R.layout.activity_tasks,null);
         taskTitle = view.findViewById(R.id.taskTitle);
         spinner = view.findViewById(R.id.spinner);
-// Create an ArrayAdapter using the string array and a default spinner layout
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.planets_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
+
+        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
+
+        // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
         builder.setView(view)
@@ -93,30 +92,15 @@ public class DialogActivity extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             Task task = new Task(taskTitle.getText().toString(), getCurrentDate(), getCurrentUserID(), spinner.getSelectedItem().toString(), "unactive");
-                            //This stops an active task
-                            //EmailPasswordActivity.getInstance().prepareTasksForExit();
-                            //populateData(task);
 
                             EmailPasswordActivity.getInstance().prepareTasksForExit();
                             Tasks.getInstance().populateData(task);
                             Tasks.getInstance().bindArrayAdapter();
                             Tasks.getInstance().setListeners();
-                            //Intent newIntent = new Intent(null, Tasks.class);
-                            //startActivity(newIntent);
-                            //Tasks.getInstance().finish();
-                            //EmailPasswordActivity.getInstance().prepareTasksForExit();
-                            //Tasks.getInstance().populateData(task);
-                            /**
-                            Tasks.getInstance().finish();
-                            Intent newIntent = new Intent(this, Tasks.class);
-                            startActivity(newIntent);
-                             */
 
                         } catch(Exception e) {
                             Log.d("dialog",e.getMessage());
                         }
-                        //Intent intent = new Intent(DialogActivity.this.getContext(),Tasks.class);
-
                         DialogActivity.this.getDialog().cancel();
                     }
                 })
