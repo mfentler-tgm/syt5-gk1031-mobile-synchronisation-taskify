@@ -16,7 +16,7 @@ Um die App zu Deployen, wird Android Studio benötigt. Darin clickt man auf das 
 
 ODER
 
-__'app-debug.apk'__ auf Smartphone laden und ausführen.
+__'Taskify.apk'__ auf Smartphone laden und ausführen.
 
 ## Implementierung
 

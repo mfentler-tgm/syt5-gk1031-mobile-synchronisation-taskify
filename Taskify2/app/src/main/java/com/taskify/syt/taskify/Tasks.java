@@ -54,7 +54,7 @@ public class Tasks extends AppCompatActivity
 
     private static final String TAG = "kurwaa";
     private DatabaseReference tDatabase;
-    private ListView listView;
+    private ListView listView = null;
     private static Tasks instance;
     private Timer T;
     private static boolean thereIsActiveTask = false;

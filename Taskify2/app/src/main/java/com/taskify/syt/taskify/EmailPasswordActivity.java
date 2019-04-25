@@ -38,7 +38,6 @@ public class EmailPasswordActivity extends MainActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mEmailField = findViewById(R.id.mEmailField);
         mPasswordField = findViewById(R.id.mPasswordField);
         mStatusMessage = findViewById(R.id.statusMessage);
