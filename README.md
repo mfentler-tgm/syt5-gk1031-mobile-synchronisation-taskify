@@ -12,7 +12,11 @@ Wenn der Task beendet wird, wird er aus der Taskliste entfernt. (Bild3)
 ![taskFinished](documentationImages/taskFinished.jpg)
 
 ## Deployment
-Um die App zu Deployen, wird Android Studio benötigt. Darin clickt man auf das 'app' Modul und klickt dann auf den 'Run' Button. Im Fenster, das sich daraufhin öffnet, wählt man das Device aus, auf den das Programm deployed werden soll. Damit das Smartphone erkannt wird, muss es per USB-Kabel mit dem Laptop verbunden werden und Dateitransfer am Smartphone erlaubt werden.
+Um die App zu Deployen, wird Android Studio benötigt. Darin clickt man auf das 'app' Modul und klickt dann auf den 'Run' Button. Im Fenster, das sich daraufhin öffnet, wählt man das Device aus, auf den das Programm deployed werden soll. Damit das Smartphone erkannt wird, muss es per USB-Kabel mit dem Laptop verbunden werden und Dateitransfer am Smartphone erlaubt werden.  
+
+ODER
+
+__'app-debug.apk'__ auf Smartphone laden und ausführen.
 
 ## Implementierung
 
