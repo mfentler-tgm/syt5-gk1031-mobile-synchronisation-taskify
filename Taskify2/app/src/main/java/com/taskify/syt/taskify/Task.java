@@ -1,5 +1,7 @@
 package com.taskify.syt.taskify;
 
+import android.util.Log;
+
 import java.sql.Time;
 import java.util.Date;
 import java.util.Timer;

@@ -52,7 +52,7 @@ import java.util.TimerTask;
 public class Tasks extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = "kurwaa";
+    private static final String TAG = "taskifyLog";
     private DatabaseReference tDatabase;
     private ListView listView = null;
     private static Tasks instance;
@@ -190,6 +190,7 @@ public class Tasks extends AppCompatActivity
         final ArrayList<Task> items = new ArrayList<Task>();
         final ArrayAdapter<Task> itemsadapter = new CustomTaskAdapter(this, items);
 
+        listView = null;
         listView = findViewById(R.id.listviewtasks);
         listView.setAdapter(itemsadapter);
 
